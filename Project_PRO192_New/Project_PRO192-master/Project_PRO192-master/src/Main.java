@@ -1,0 +1,250 @@
+import model.TeaPot;
+import model.Dish;
+import model.Tea;
+import model.Room;
+import service.TeaPotManager;
+import service.BillManager;
+import service.DishManager;
+import service.TeaManager;
+
+import java.util.Scanner;
+import service.RoomManager;
+
+public class Main {
+    static Scanner sc = new Scanner(System.in, "UTF-8");
+    static TeaManager teaManager = new TeaManager();
+    static TeaPotManager teaPotManager = new TeaPotManager();
+    static DishManager dishManager = new DishManager();
+    static RoomManager roomManager = new RoomManager();
+    static BillManager billManager = new BillManager(teaManager, teaPotManager, dishManager, roomManager);  
+    public static void main(String[] args) {
+        initializeSampleData();
+
+        while (true) {
+            System.out.println("\n╔══════════════════════════════╗");
+            System.out.println("║   🍵 QUẢN LÝ PHÒNG TRÀ 🍵 ║");
+            System.out.println("╠══════════════════════════════╣");
+            System.out.println("║ 1. Quản lý trà           ║");
+            System.out.println("║ 2. Quản lý ấm trà        ║");
+            System.out.println("║ 3. Quản lý món ăn kèm    ║");
+            System.out.println("║ 4. Quản lý Phòng         ║");
+            System.out.println("║ 5. Tạo hóa đơn           ║");
+            System.out.println("║ 0. Thoát                 ║");
+            System.out.println("╚══════════════════════════════╝");
+            System.out.print("Chọn: ");
+
+            String choice = sc.nextLine();
+            switch (choice) {
+                case "1": teaMenu(); break;
+                case "2": teaPotMenu(); break;
+                case "3": dishMenu(); break;
+                case "4": roomMenu(); break;
+                case "5": billManager.createBill(sc); break;
+                case "0":
+                    System.out.println("👋 Tạm biệt!");
+                    return;
+                default:
+                    System.out.println("⚠️ Lựa chọn không hợp lệ.");
+            }
+        }
+    }
+
+    // ================== MENU TRÀ ==================
+    static void teaMenu() {
+        while (true) {
+            System.out.println("\n--- QUẢN LÝ TRÀ ---");
+            System.out.println("1. Xem danh sách");
+            System.out.println("2. Thêm trà");
+            System.out.println("3. Xóa trà");
+            System.out.println("0. Quay lại");
+            System.out.print("Chọn: ");
+
+            String choice = sc.nextLine();
+            switch (choice) {
+                case "1": teaManager.displayAll(); break;
+                case "2":
+                    System.out.print("Mã: "); String id = sc.nextLine();
+            System.out.print("Tên: "); String name = sc.nextLine();
+            System.out.print("Giá: "); double price = Double.parseDouble(sc.nextLine());
+            System.out.print("Số lượng: "); int quantity = Integer.parseInt(sc.nextLine());
+            System.out.print("Đơn vị tính (VD: Phần, 100g): "); String unit = sc.nextLine();    
+            teaManager.add(new Tea(id, name, price, quantity, unit)); 
+                    break;
+                case "3":
+                    System.out.print("Nhập mã cần xóa: ");
+                    String idToRemove = sc.nextLine();
+                    System.out.println(teaManager.remove(idToRemove) ? "✅ Đã xóa!" : "❌ Không tìm thấy!");
+                    break;
+                case "0": return;
+            }
+        }
+    }
+
+    // ================== MENU ẤM ==================
+    static void teaPotMenu() {
+        while (true) {
+            System.out.println("\n--- QUẢN LÝ ẤM TRÀ ---");
+            System.out.println("1. Xem danh sách");
+            System.out.println("2. Thêm ấm");
+            System.out.println("3. Xóa ấm");
+            System.out.println("0. Quay lại");
+            System.out.print("Chọn: ");
+
+            String choice = sc.nextLine();
+            switch (choice) {
+                case "1": teaPotManager.displayAll(); break;
+                case "2":
+                    System.out.print("Mã: "); String id = sc.nextLine();
+                    System.out.print("Tên: "); String name = sc.nextLine();
+                    System.out.print("Giá thuê/giờ: "); double price = Double.parseDouble(sc.nextLine());
+                    System.out.print("Số lượng: "); int quantity = Integer.parseInt(sc.nextLine());
+                    teaPotManager.add(new TeaPot(id, name, price, quantity));
+                    break;
+                case "3":
+                    System.out.print("Nhập mã cần xóa: ");
+                    String idToRemove = sc.nextLine();
+                    System.out.println(teaPotManager.remove(idToRemove) ? "✅ Đã xóa!" : "❌ Không tìm thấy!");
+                    break;
+                case "0": return;
+            }
+        }
+    }
+
+    // ================== MENU MÓN ==================
+    static void dishMenu() {
+        while (true) {
+            System.out.println("\n--- QUẢN LÝ MÓN ĂN KÈM ---");
+            System.out.println("1. Xem danh sách");
+            System.out.println("2. Thêm món");
+            System.out.println("3. Xóa món");
+            System.out.println("0. Quay lại");
+            System.out.print("Chọn: ");
+
+            String choice = sc.nextLine();
+            switch (choice) {
+                case "1": dishManager.displayAll(); break;
+                case "2":
+                    System.out.print("Mã: "); String id = sc.nextLine();
+                    System.out.print("Tên: "); String name = sc.nextLine();
+                    System.out.print("Giá: "); double price = Double.parseDouble(sc.nextLine());
+                    System.out.print("Số lượng: "); int quantity = Integer.parseInt(sc.nextLine());
+                    dishManager.add(new Dish(id, name, price, quantity));
+                    break;
+                case "3":
+                    System.out.print("Nhập mã cần xóa: ");
+                    String idToRemove = sc.nextLine();
+                    System.out.println(dishManager.remove(idToRemove) ? "✅ Đã xóa!" : "❌ Không tìm thấy!");
+                    break;
+                case "0": return;
+            }
+        }
+    }
+    
+    // ================== MENU MÓN ==================
+    static void roomMenu() {
+        while (true) {
+            System.out.println("\n--- QUẢN LÝ PHÒNG ---");
+            System.out.println("1. Xem danh sách");
+            System.out.println("2. Thêm phòng");
+            System.out.println("3. Xóa phòng");
+            System.out.println("0. Quay lại");
+            System.out.print("Chọn: ");
+
+            String choice = sc.nextLine();
+            switch (choice) {
+                case "1": roomManager.display(); break;
+                case "2":
+                    System.out.print("Mã: "); String id = sc.nextLine();
+                    System.out.print("Tên: "); String name = sc.nextLine();
+                    System.out.print("Loại: "); String type = sc.nextLine();
+                    System.out.print("Số lượng: ");
+                    int capacity = Integer.parseInt(sc.nextLine().trim());
+
+                    System.out.print("Giá: ");
+                    double price = Double.parseDouble(sc.nextLine().trim());
+
+                    boolean s;
+                    while (true) {
+                        System.out.print("Trạng thái (on/off): ");
+                        String status = sc.nextLine().trim();
+
+                        if (status.equalsIgnoreCase("on")) {
+                            s = true;
+                            break;              // thoát vòng while, đi tiếp
+                        } else if (status.equalsIgnoreCase("off")) {
+                            s = false;
+                            break;
+                        } else {
+                            System.err.println("The input must be on or off");
+                            // không break -> quay lại hỏi "Trạng thái" ngay
+                        }
+                    }
+                    Room r = new Room(id, name, type, capacity, price, s);
+                    roomManager.addRoom(r);
+                    break;
+                case "3":
+                    System.out.print("Nhập mã cần xóa: ");
+                    String idToRemove = sc.nextLine();
+                    System.out.println(dishManager.remove(idToRemove) ? "✅ Đã xóa!" : "❌ Không tìm thấy!");
+                    break;
+                case "0": return;
+            }
+        }
+    }
+
+    // ================== DỮ LIỆU MẪU ==================
+    static void initializeSampleData() {
+    // Trà phổ biến
+    teaManager.add(new Tea("T01", "Phổ nhĩ", 350000, 50, "10g/phần"));
+    teaManager.add(new Tea("T02", "Phổ nhĩ quýt", 50000, 30, "1 viên"));
+    teaManager.add(new Tea("T03", "Đại Hồng Bào", 100000, 40, "10 gram"));
+    teaManager.add(new Tea("T04", "Bạch Hào Ngân Châm", 100000, 60, "10 gram"));
+    teaManager.add(new Tea("T05", "Mộng Đỉnh Hoàng Nha", 300000, 25, "10 gram"));
+
+    // Ấm trà
+    teaPotManager.add(new TeaPot("A01", "Ấm tử sa nhỏ", 200000, 10));
+    teaPotManager.add(new TeaPot("A02", "Ấm Sứ", 250000, 8));
+    teaPotManager.add(new TeaPot("A03", "Ấm Tử Đào", 150000, 12));
+    teaPotManager.add(new TeaPot("A04", "Ấm Nê Hưng", 200000, 10));
+    teaPotManager.add(new TeaPot("A05", "Ấm Vinh Xương", 200000, 10));
+    teaPotManager.add(new TeaPot("A06", "Ấm Chu Nê", 220000, 6));
+    teaPotManager.add(new TeaPot("A07", "Ấm Thủy Bình", 180000, 8));
+    teaPotManager.add(new TeaPot("A08", "Ấm Thạch Biều", 260000, 5));
+    teaPotManager.add(new TeaPot("A09", "Ấm Bán Nguyệt", 190000, 9));
+    teaPotManager.add(new TeaPot("A10", "Ấm Tây Thi", 210000, 7));
+
+    // Món ăn kèm
+    dishManager.add(new Dish("M01", "Bánh đậu xanh", 15000, 100));
+    dishManager.add(new Dish("M02", "Bánh trung thu", 30000, 50));
+    dishManager.add(new Dish("M03", "Hạt hướng dương", 10000, 200));
+    dishManager.add(new Dish("M04", "Mứt sen", 20000, 80));
+    dishManager.add(new Dish("M05", "Bánh in", 18000, 90));
+    dishManager.add(new Dish("M06", "Hạt dẻ rang", 35000, 60));
+    dishManager.add(new Dish("M07", "Mứt gừng", 25000, 70));
+    dishManager.add(new Dish("M08", "Bánh pía mini", 22000, 80));
+    dishManager.add(new Dish("M09", "Trái cây sấy", 40000, 50));
+
+    // Phòng trà
+    roomManager.addRoom(new Room("P01", "Phòng Trúc", "Thường", 4, 500000));
+    roomManager.addRoom(new Room("P02", "Phòng Mai", "Thường", 6, 800000));
+    roomManager.addRoom(new Room("P03", "Phòng Lan", "VIP", 8, 1200000));
+    roomManager.addRoom(new Room("P04", "Sân vườn Tùng", "Sân vườn", 12, 2000000));
+    roomManager.addRoom(new Room("P05", "Phòng Cúc", "Thường", 4, 600000));
+    roomManager.addRoom(new Room("P06", "Phòng Sen", "Thường", 8, 900000));
+    roomManager.addRoom(new Room("P07", "Phòng Đào", "VIP", 6, 1500000));
+    roomManager.addRoom(new Room("P08", "Phòng Hồng Mai", "VIP", 10, 1800000));
+    roomManager.addRoom(new Room("P09", "Sân vườn Thủy Trúc", "Sân vườn", 15, 2000000));
+    
+    // Mang về
+    teaManager.add(new Tea("MV01", "Phổ nhĩ loại 1", 3200000, 50, "1 bánh 357 gram"));
+    teaManager.add(new Tea("MV02", "Phổ nhĩ loại 2", 1700000, 50, "1 bánh 357 gram"));
+    teaManager.add(new Tea("MV03", "Phổ nhĩ loại 3", 650000 , 50, "1 bánh 357 gram"));
+    teaManager.add(new Tea("MV04", "Phổ nhĩ quýt", 1400000, 30, "28 viên"));
+    teaManager.add(new Tea("MV05", "Đại Hồng Bào", 2190000, 40, "250 gram"));
+    teaManager.add(new Tea("MV06", "Bạch Hào Ngân Châm", 2500000, 60, "400 gram"));
+    teaManager.add(new Tea("MV07", "Mộng Đỉnh Hoàng Nha", 3500000, 25, "120 gram"));
+        
+    
+}
+}
+
